@@ -1,15 +1,12 @@
 import { Request, Response } from 'express';
 import { OrderRepository } from '../repository/OrderRepository';
 import { OrderStatus } from '../domain/OrderStatus';
-import { ShipmentService } from '../service/ShipmentService';
 
 class OrderShipmentController {
   private readonly repository: OrderRepository
-  private readonly shipmentService: ShipmentService
 
     constructor() {
       this.repository = new OrderRepository();
-      this.shipmentService = new ShipmentService();
     }
 
     handle(req: Request, res: Response) {
@@ -29,12 +26,10 @@ class OrderShipmentController {
           return res.status(400).json({ message: 'Order cannot be shipped twice' });
         }
 
-        this.shipmentService.ship(order);
-
         order.status = OrderStatus.SHIPPED;
         this.repository.save(order);
 
-        return res.status(200);
+        return res.status(200).json({message: 'Order shipped'});
       
       };
 }

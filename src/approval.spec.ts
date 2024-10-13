@@ -2,10 +2,12 @@ import { AddProductController } from "./controllers/AddProductController";
 import { OrderPlacementController } from "./controllers/OrderPlacementController";
 import { OrderApprovalController } from "./controllers/OrderApprovalController";
 import { OrderRejectionController } from "./controllers/OrderRejectionController";
+import { OrderShipmentController } from "./controllers/OrderShipmentController";
 
 import { Request, Response} from "express";
 import { OrderRepository } from "./repository/OrderRepository";
 import { ProductCatalog } from "./repository/ProductCatalog";
+import { InvoiceController } from "./controllers/InvoiceController";
 
 class FakeResponse {
   private statusCode: number | undefined;
@@ -57,6 +59,18 @@ function approveOrder(body: any): FakeResponse {
 function rejectOrder(body: any): FakeResponse {
   const res = new FakeResponse();
   new OrderRejectionController().handle({body} as unknown as Request, res as unknown as Response)
+  return res;
+}
+
+function shipOrder(body: any): FakeResponse {
+  const res = new FakeResponse();
+  new OrderShipmentController().handle({body} as unknown as Request, res as unknown as Response)
+  return res;
+}
+
+function getInvoice(body: any): FakeResponse {
+  const res = new FakeResponse();
+  new InvoiceController().handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }
 
@@ -175,6 +189,110 @@ describe('Tests', () => {
     const response = approveOrder({orderId})
     expect(response.getStatus()).toBe(400);
     expect(response.getJson()).toStrictEqual({message: 'rejected orders cannot be approved'});
+  })
+  test('ship order succesfully', () => {
+    addProduct(
+      {
+        name: "My product",
+        taxPercentage: "5"
+      },
+    )
+    const orderId = placeOrder({items: [{productName: "My product", quantity: 3}]}).getJson().orderId;
+    approveOrder({orderId})
+    const response = shipOrder({orderId})
+    expect(response.getStatus()).toBe(200);
+    expect(response.getJson()).toStrictEqual({message: 'Order shipped'});
+  })
+  test('ship non existing order', () => {
+    const response = shipOrder({orderId: 1})
+    expect(response.getStatus()).toBe(404);
+    expect(response.getJson()).toStrictEqual({message: 'Order not found'});
+  })
+  test('ship rejected order', () => {
+    addProduct(
+      {
+        name: "My product",
+        taxPercentage: "5"
+      },
+    )
+    const orderId = placeOrder({items: [{productName: "My product", quantity: 3}]}).getJson().orderId;
+    rejectOrder({orderId})
+    const response = shipOrder({orderId})
+    expect(response.getStatus()).toBe(400);
+    expect(response.getJson()).toStrictEqual({message: 'Order cannot be shipped'});
+  })
+  test('ship non approved order', () => {
+    addProduct(
+      {
+        name: "My product",
+        taxPercentage: "5"
+      },
+    )
+    const orderId = placeOrder({items: [{productName: "My product", quantity: 3}]}).getJson().orderId;
+    const response = shipOrder({orderId})
+    expect(response.getStatus()).toBe(400);
+    expect(response.getJson()).toStrictEqual({message: 'Order cannot be shipped'});
+  })
+  test('ship twice', () => {
+    addProduct(
+      {
+        name: "My product",
+        taxPercentage: "5"
+      },
+    )
+    const orderId = placeOrder({items: [{productName: "My product", quantity: 3}]}).getJson().orderId;
+    approveOrder({orderId})
+    shipOrder({orderId})
+    const response = shipOrder({orderId})
+    expect(response.getStatus()).toBe(400);
+    expect(response.getJson()).toStrictEqual({message: 'Order cannot be shipped twice'});
+  })
+  test('approve after shipment', () => {
+    addProduct(
+      {
+        name: "My product",
+        taxPercentage: "5"
+      },
+    )
+    const orderId = placeOrder({items: [{productName: "My product", quantity: 3}]}).getJson().orderId;
+    approveOrder({orderId})
+    shipOrder({orderId})
+    const response = approveOrder({orderId})
+    expect(response.getStatus()).toBe(400);
+    expect(response.getJson()).toStrictEqual({message: 'shipped orders cannot be changed'});
+  })
+  test('reject after shipment', () => {
+    addProduct(
+      {
+        name: "My product",
+        taxPercentage: "5"
+      },
+    )
+    const orderId = placeOrder({items: [{productName: "My product", quantity: 3}]}).getJson().orderId;
+    approveOrder({orderId})
+    shipOrder({orderId})
+    const response = rejectOrder({orderId})
+    expect(response.getStatus()).toBe(400);
+    expect(response.getJson()).toStrictEqual({message: 'shipped orders cannot be changed'});
+  })
+  test('get invoice', () => {
+    addProduct(
+      {
+        name: "My product",
+        taxPercentage: "10",
+        price: "10.00"
+      },
+    )
+    const orderId = placeOrder({items: [{productName: "My product", quantity: 3}]}).getJson().orderId;
+    approveOrder({orderId})
+    shipOrder({orderId})
+    const response = getInvoice({orderId})
+    expect(response.getStatus()).toBe(200);
+    expect(response.getJson()).toStrictEqual({
+      products: [{name: "My product", quantity: 3}],
+      total: "33.00 EUR",
+      totalTax: "3.00 EUR"
+    });
   })
 });
 
