@@ -1,0 +1,1 @@
+You should be able to run `npm install` and `npm test` to see the tests pass.
