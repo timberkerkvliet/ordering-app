@@ -2,6 +2,10 @@ import { Order } from "../domain/Order";
 
 export class OrderRepository {
     private static orders: Map<number, Order> = new Map();
+    
+    clear(): void {
+        OrderRepository.orders = new Map();
+    }
 
     save(order: Order): void {
         OrderRepository.orders.set(order.id, order);

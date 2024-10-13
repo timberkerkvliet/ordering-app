@@ -4,6 +4,8 @@ import { OrderApprovalController } from "./controllers/OrderApprovalController";
 import { OrderRejectionController } from "./controllers/OrderRejectionController";
 
 import { Request, Response} from "express";
+import { OrderRepository } from "./repository/OrderRepository";
+import { ProductCatalog } from "./repository/ProductCatalog";
 
 class FakeResponse {
   private statusCode: number | undefined;
@@ -59,6 +61,10 @@ function rejectOrder(body: any): FakeResponse {
 }
 
 describe('Tests', () => {
+  beforeEach(() => {
+    new OrderRepository().clear();
+    new ProductCatalog().clear();
+  });
   test('non placing non existing product', () => {
     expect(placeOrder({items: [{name: "Does not exist", quantity: 1}]}).getStatus()).toBe(404);
   });
@@ -138,6 +144,37 @@ describe('Tests', () => {
     const response = rejectOrder({orderId})
     expect(response.getStatus()).toBe(200);
     expect(response.getJson()).toStrictEqual({message: 'Order status updated successfully'});
+  })
+  test('reject twice', () => {
+    addProduct(
+      {
+        name: "My product",
+        taxPercentage: "5"
+      },
+    )
+    const orderId = placeOrder({items: [{productName: "My product", quantity: 3}]}).getJson().orderId;
+    rejectOrder({orderId})
+    const response = rejectOrder({orderId})
+    expect(response.getStatus()).toBe(200);
+    expect(response.getJson()).toStrictEqual({message: 'Order status updated successfully'});
+  })
+  test('reject non existing', () => {
+    const response = rejectOrder({orderId: 1})
+    expect(response.getStatus()).toBe(404);
+    expect(response.getJson()).toStrictEqual({message: 'Order not found'});
+  })
+  test('cannot approve rejected order', () => {
+    addProduct(
+      {
+        name: "My product",
+        taxPercentage: "5"
+      },
+    )
+    const orderId = placeOrder({items: [{productName: "My product", quantity: 3}]}).getJson().orderId;
+    rejectOrder({orderId})
+    const response = approveOrder({orderId})
+    expect(response.getStatus()).toBe(400);
+    expect(response.getJson()).toStrictEqual({message: 'rejected orders cannot be approved'});
   })
 });
 
