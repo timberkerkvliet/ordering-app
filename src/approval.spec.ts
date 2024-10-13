@@ -297,6 +297,13 @@ describe('Tests', () => {
       message: 'Order is not shipped'
     });
   })
+  test('invoice on non existing order', () => {
+    const response = getInvoice({orderId: 1})
+    expect(response.getStatus()).toBe(404);
+    expect(response.getJson()).toStrictEqual({
+      message: 'Order not found'
+    });
+  })
   test('invoice', () => {
     addProduct(
       {
