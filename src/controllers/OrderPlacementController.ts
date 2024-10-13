@@ -18,6 +18,10 @@ class OrderPlacementController {
     handle(req: Request, res: Response) {
         const items = req.body.items;
 
+        if (items.length === 0) {
+          return res.status(400).json({message: 'Order must contain products'})
+        }
+
         let order: Order = {
           id: this.repository.maxId() + 1,
           status: OrderStatus.CREATED,

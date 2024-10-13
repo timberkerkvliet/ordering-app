@@ -82,6 +82,11 @@ describe('Tests', () => {
   test('non placing non existing product', () => {
     expect(placeOrder({items: [{name: "Does not exist", quantity: 1}]}).getStatus()).toBe(404);
   });
+  test('empty order', () => {
+    const response = placeOrder({items: []});
+    expect(response.getStatus()).toBe(400);
+    expect(response.getJson()).toStrictEqual({message: 'Order must contain products'})
+  });
   test('adding product', () => {
     const response = addProduct(
       {
