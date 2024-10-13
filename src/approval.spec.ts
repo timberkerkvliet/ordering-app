@@ -280,6 +280,23 @@ describe('Tests', () => {
     expect(response.getStatus()).toBe(400);
     expect(response.getJson()).toStrictEqual({message: 'shipped orders cannot be changed'});
   })
+  test('invoice on non shipped order', () => {
+    addProduct(
+      {
+        name: "My product",
+        taxPercentage: "10",
+        price: "10.00"
+      },
+    )
+    const orderId = placeOrder({items: [{productName: "My product", quantity: 3}]}).getJson().orderId;
+    approveOrder({orderId})
+    
+    const response = getInvoice({orderId})
+    expect(response.getStatus()).toBe(400);
+    expect(response.getJson()).toStrictEqual({
+      message: 'Order is not shipped'
+    });
+  })
   test('invoice', () => {
     addProduct(
       {
