@@ -275,7 +275,7 @@ describe('Tests', () => {
     expect(response.getStatus()).toBe(400);
     expect(response.getJson()).toStrictEqual({message: 'shipped orders cannot be changed'});
   })
-  test('get invoice', () => {
+  test('invoice', () => {
     addProduct(
       {
         name: "My product",
@@ -292,6 +292,32 @@ describe('Tests', () => {
       products: [{name: "My product", quantity: 3}],
       total: "33.00 EUR",
       totalTax: "3.00 EUR"
+    });
+  })
+  test('invoice with two products', () => {
+    addProduct(
+      {
+        name: "Banana",
+        taxPercentage: "10",
+        price: "9.00"
+      }
+    )
+    addProduct(
+      {
+        name: "Apple",
+        taxPercentage: "20",
+        price: "12.50"
+      }
+    )
+    const orderId = placeOrder({items: [{productName: "Banana", quantity: 1}, {productName: "Apple", quantity: 2}]}).getJson().orderId;
+    approveOrder({orderId})
+    shipOrder({orderId})
+    const response = getInvoice({orderId})
+    expect(response.getStatus()).toBe(200);
+    expect(response.getJson()).toStrictEqual({
+      products: [{name: "Banana", quantity: 1}, {name: "Apple", quantity: 2}],
+      total: "39.90 EUR",
+      totalTax: "5.90 EUR"
     });
   })
 });
