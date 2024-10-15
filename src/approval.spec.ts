@@ -8,6 +8,7 @@ import { Request, Response} from "express";
 import { OrderRepository } from "./repository/OrderRepository";
 import { ProductCatalog } from "./repository/ProductCatalog";
 import { InvoiceController } from "./controllers/InvoiceController";
+import { AddProductUseCase } from "./interaction/AddProductUseCase";
 
 class FakeResponse {
   private statusCode: number | undefined;
@@ -40,7 +41,7 @@ class FakeResponse {
 
 function addProduct(body: any): FakeResponse {
   const res = new FakeResponse();
-  new AddProductController().handle({body} as unknown as Request, res as unknown as Response)
+  new AddProductController(new AddProductUseCase()).handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }
 
