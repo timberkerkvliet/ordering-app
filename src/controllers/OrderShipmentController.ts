@@ -18,15 +18,15 @@ class OrderShipmentController {
           return res.status(404).json({ message: 'Order not found' });
         }
 
-        if (order.status === OrderStatus.CREATED || order.status === OrderStatus.REJECTED) {
+        if (order.data.status === OrderStatus.CREATED || order.data.status === OrderStatus.REJECTED) {
           return res.status(400).json({ message: 'Order cannot be shipped' });
         }
 
-        if (order.status == OrderStatus.SHIPPED) {
+        if (order.data.status == OrderStatus.SHIPPED) {
           return res.status(400).json({ message: 'Order cannot be shipped twice' });
         }
 
-        order.status = OrderStatus.SHIPPED;
+        order.data.status = OrderStatus.SHIPPED;
         this.repository.save(order);
 
         return res.status(200).json({message: 'Order shipped'});

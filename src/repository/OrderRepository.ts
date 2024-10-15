@@ -8,7 +8,7 @@ export class OrderRepository {
     }
 
     save(order: Order): void {
-        OrderRepository.orders.set(order.id, order);
+        OrderRepository.orders.set(order.data.id, order);
     }
 
     getById(id: number): Order | undefined {

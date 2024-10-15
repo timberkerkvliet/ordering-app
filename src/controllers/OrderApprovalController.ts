@@ -18,15 +18,15 @@ class OrderApprovalController {
           return res.status(404).json({ message: 'Order not found' });
         }
     
-        if (order.status === OrderStatus.SHIPPED) {
+        if (order.data.status === OrderStatus.SHIPPED) {
           return res.status(400).json({ message: 'shipped orders cannot be changed' });
         }
     
-        if (order.status === OrderStatus.REJECTED) {
+        if (order.data.status === OrderStatus.REJECTED) {
           return res.status(400).json({ message: 'rejected orders cannot be approved' });
         }
 
-        order.status = OrderStatus.APPROVED;
+        order.data.status = OrderStatus.APPROVED;
     
         this.repository.save(order);
     

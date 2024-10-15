@@ -20,15 +20,15 @@ class InvoiceController {
         return res.status(404).json({ message: 'Order not found' });
       }
 
-      if (order.status !== OrderStatus.SHIPPED) {
+      if (order.data.status !== OrderStatus.SHIPPED) {
         return res.status(400).json({ message: 'Order is not shipped' });
       }
 
       return res.status(200).json(
         {
-          products: order.items.map((item) => { return {name: item.product.name, quantity: item.quantity}}),
-          total: order.total.getValue() + " " + order.currency,
-          totalTax: order.tax.getValue() + " " + order.currency
+          products: order.data.items.map((item) => { return {name: item.product.name, quantity: item.quantity}}),
+          total: order.data.total.getValue() + " " + order.data.currency,
+          totalTax: order.data.tax.getValue() + " " + order.data.currency
         });
       
       };
