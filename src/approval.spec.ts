@@ -10,6 +10,7 @@ import { ProductCatalogInMemory } from "./adapters/ProductCatalogInMemory";
 import { InvoiceController } from "./outer/InvoiceController";
 import { AddProductUseCase } from "./interaction/AddProductUseCase";
 import { InvoiceUseCase } from "./interaction/InvoiceUseCase";
+import { OrderStatusUseCase } from "./interaction/OrderStatusUseCase";
 
 class FakeResponse {
   private statusCode: number | undefined;
@@ -57,7 +58,10 @@ function placeOrder(body: any): FakeResponse {
 
 function approveOrder(body: any): FakeResponse {
   const res = new FakeResponse();
-  new OrderApprovalController().handle({body} as unknown as Request, res as unknown as Response)
+  const contoller = new OrderApprovalController(
+    new OrderStatusUseCase(new OrderRepositoryInMemory())
+  )
+  contoller.handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }
 
