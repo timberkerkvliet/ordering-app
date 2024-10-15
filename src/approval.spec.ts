@@ -1,16 +1,17 @@
-import { AddProductController } from "./outer/AddProductController";
-import { OrderPlacementController } from "./outer/OrderPlacementController";
-import { OrderApprovalController } from "./outer/OrderApprovalController";
-import { OrderRejectionController } from "./outer/OrderRejectionController";
-import { OrderShipmentController } from "./outer/OrderShipmentController";
+import { AddProductController } from "./adapters/AddProductController";
+import { OrderPlacementController } from "./adapters/OrderPlacementController";
+import { OrderApprovalController } from "./adapters/OrderApprovalController";
+import { OrderRejectionController } from "./adapters/OrderRejectionController";
+import { OrderShipmentController } from "./adapters/OrderShipmentController";
 
 import { Request, Response} from "express";
 import { OrderRepositoryInMemory } from "./adapters/OrderRepositoryInMemory";
 import { ProductCatalogInMemory } from "./adapters/ProductCatalogInMemory";
-import { InvoiceController } from "./outer/InvoiceController";
+import { InvoiceController } from "./adapters/InvoiceController";
 import { AddProductUseCase } from "./interaction/AddProductUseCase";
 import { InvoiceUseCase } from "./interaction/InvoiceUseCase";
 import { OrderStatusUseCase } from "./interaction/OrderStatusUseCase";
+import { ExpressController } from "./outer/ExpressController";
 
 class FakeResponse {
   private statusCode: number | undefined;
@@ -43,8 +44,10 @@ class FakeResponse {
 
 function addProduct(body: any): FakeResponse {
   const res = new FakeResponse();
-  const controller = new AddProductController(
+  const controller = new ExpressController(
+    new AddProductController(
     new AddProductUseCase(new ProductCatalogInMemory())
+    )
   )
   controller.handle({body} as unknown as Request, res as unknown as Response)
   return res;
@@ -52,14 +55,15 @@ function addProduct(body: any): FakeResponse {
 
 function placeOrder(body: any): FakeResponse {
   const res = new FakeResponse();
-  new OrderPlacementController().handle({body} as unknown as Request, res as unknown as Response)
+  const controller = new ExpressController(new OrderPlacementController());
+  controller.handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }
 
 function approveOrder(body: any): FakeResponse {
   const res = new FakeResponse();
-  const contoller = new OrderApprovalController(
-    new OrderStatusUseCase(new OrderRepositoryInMemory())
+  const contoller = new ExpressController(new OrderApprovalController(
+    new OrderStatusUseCase(new OrderRepositoryInMemory()))
   )
   contoller.handle({body} as unknown as Request, res as unknown as Response)
   return res;
@@ -67,20 +71,21 @@ function approveOrder(body: any): FakeResponse {
 
 function rejectOrder(body: any): FakeResponse {
   const res = new FakeResponse();
-  const controller = new OrderRejectionController(new OrderStatusUseCase(new OrderRepositoryInMemory()));
+  const controller = new ExpressController(new OrderRejectionController(new OrderStatusUseCase(new OrderRepositoryInMemory())));
   controller.handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }
 
 function shipOrder(body: any): FakeResponse {
   const res = new FakeResponse();
-  new OrderShipmentController().handle({body} as unknown as Request, res as unknown as Response)
+  const controller = new ExpressController(new OrderShipmentController(new OrderStatusUseCase(new OrderRepositoryInMemory())));
+  controller.handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }
 
 function getInvoice(body: any): FakeResponse {
   const res = new FakeResponse();
-  const contoller = new InvoiceController(new InvoiceUseCase(new OrderRepositoryInMemory()));
+  const contoller = new ExpressController(new InvoiceController(new InvoiceUseCase(new OrderRepositoryInMemory())));
   contoller.handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }

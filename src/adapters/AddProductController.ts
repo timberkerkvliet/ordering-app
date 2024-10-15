@@ -1,15 +1,14 @@
-import { Request, Response } from 'express';
 import { AddProductUseCase } from '../interaction/AddProductUseCase';
+import { HttpController, HttpRequest, HttpResponse } from './HttpController';
 
-class AddProductController {
+class AddProductController implements HttpController {
     constructor(private readonly addProductUseCase: AddProductUseCase) {
     }
 
-    handle(req: Request, res: Response) {
+    handle(req: HttpRequest): HttpResponse {
         this.addProductUseCase.handle(req.body.name, req.body.taxPercentage, req.body.price);
     
-        return res.status(200).json({ message: 'Product added successfully'});
-      
+        return new HttpResponse().status(200).json({ message: 'Product added successfully'});
       };
 }
 

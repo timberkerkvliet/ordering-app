@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
 import { OrderRepositoryInMemory } from '../adapters/OrderRepositoryInMemory';
 import { Order } from '../domain/Order';
 import { ProductCatalogInMemory } from '../adapters/ProductCatalogInMemory';
+import { HttpController, HttpRequest, HttpResponse } from './HttpController';
 
-class OrderPlacementController {
+class OrderPlacementController implements HttpController {
   private readonly repository: OrderRepositoryInMemory
   private readonly productCatalog: ProductCatalogInMemory
 
@@ -12,11 +12,11 @@ class OrderPlacementController {
       this.productCatalog = new ProductCatalogInMemory();
     }
 
-    handle(req: Request, res: Response) {
-        const items = req.body.items;
+    handle(request: HttpRequest): HttpResponse {
+        const items = request.body.items;
 
         if (items.length === 0) {
-          return res.status(400).json({message: 'Order must contain products'})
+          return new HttpResponse().status(400).json({message: 'Order must contain products'})
         }
 
         let order = Order.emptyOrder(this.repository.maxId() + 1);
@@ -24,13 +24,13 @@ class OrderPlacementController {
         for (let itemRequest of items) {
             let product = this.productCatalog.getByName(itemRequest.productName);
             if (product === undefined) {
-              return res.status(404).json({ message: 'Product not found' });
+              return new HttpResponse().status(404).json({ message: 'Product not found' });
             }
 
             order = order.addProduct(product, itemRequest.quantity);
         }
         this.repository.save(order);
-        return res.status(200).json({orderId: order.data.id});
+        return new HttpResponse().status(200).json({orderId: order.data.id});
       
       };
 }
