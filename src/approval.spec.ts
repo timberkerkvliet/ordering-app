@@ -67,7 +67,8 @@ function approveOrder(body: any): FakeResponse {
 
 function rejectOrder(body: any): FakeResponse {
   const res = new FakeResponse();
-  new OrderRejectionController().handle({body} as unknown as Request, res as unknown as Response)
+  const controller = new OrderRejectionController(new OrderStatusUseCase(new OrderRepositoryInMemory()));
+  controller.handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }
 
