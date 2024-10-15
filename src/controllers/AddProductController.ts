@@ -12,10 +12,7 @@ class AddProductController {
     handle(req: Request, res: Response) {
         const order = this.productCatalog.add({
           name: req.body.name,
-          category: {
-            name: "GOODS",
-            taxPercentage: new bigDecimal(req.body.taxPercentage),
-          },
+          taxPercentage: new bigDecimal(req.body.taxPercentage),
           price: new bigDecimal(req.body.price)
         });
     

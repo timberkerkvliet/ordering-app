@@ -1,5 +1,5 @@
 import { OrderStatus } from "./OrderStatus";
-import { OrderItem } from "./OrderItem";
+import { createOrderItemFromProduct, OrderItem } from "./OrderItem";
 import bigDecimal from "js-big-decimal";
 import { Product } from "./Product";
 
@@ -27,22 +27,13 @@ class Order {
     }
     
     public addProduct(product: Product, quantity: number): Order {
-        const unitaryTax = product.price.divide(new bigDecimal(100)).multiply(product.category.taxPercentage).round(2);
-        const unitaryTaxedAmount = product.price.add(unitaryTax).round(2);
-        const taxedAmount = unitaryTaxedAmount.multiply(new bigDecimal(quantity)).round(2);
-        const taxAmount = unitaryTax.multiply(new bigDecimal(quantity));
-        const orderItem: OrderItem = {
-            product: product,
-            quantity: quantity,
-            tax: taxAmount,
-            taxedAmount: taxedAmount
-        }
+        const orderItem = createOrderItemFromProduct(product, quantity);
         return new Order(
             {
                 ...this.data,
                 items: [...this.data.items , orderItem],
-                total: this.data.total.add(taxedAmount),
-                tax: this.data.tax.add(taxAmount)
+                total: this.data.total.add(orderItem.taxedAmount),
+                tax: this.data.tax.add(orderItem.tax)
             }
         );
     }

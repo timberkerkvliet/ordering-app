@@ -1,8 +1,9 @@
-import { Category } from "./Category";
 import bigDecimal from "js-big-decimal";
 
-export type Product = {
+type Product = {
     name: string
     price: bigDecimal
-    category: Category
+    taxPercentage: bigDecimal
 }
+
+export { Product}
