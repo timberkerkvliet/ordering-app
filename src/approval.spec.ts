@@ -1,13 +1,13 @@
-import { AddProductController } from "./controllers/AddProductController";
-import { OrderPlacementController } from "./controllers/OrderPlacementController";
-import { OrderApprovalController } from "./controllers/OrderApprovalController";
-import { OrderRejectionController } from "./controllers/OrderRejectionController";
-import { OrderShipmentController } from "./controllers/OrderShipmentController";
+import { AddProductController } from "./outer/AddProductController";
+import { OrderPlacementController } from "./outer/OrderPlacementController";
+import { OrderApprovalController } from "./outer/OrderApprovalController";
+import { OrderRejectionController } from "./outer/OrderRejectionController";
+import { OrderShipmentController } from "./outer/OrderShipmentController";
 
 import { Request, Response} from "express";
 import { OrderRepositoryInMemory } from "./adapters/OrderRepositoryInMemory";
 import { ProductCatalogInMemory } from "./adapters/ProductCatalogInMemory";
-import { InvoiceController } from "./controllers/InvoiceController";
+import { InvoiceController } from "./outer/InvoiceController";
 import { AddProductUseCase } from "./interaction/AddProductUseCase";
 
 class FakeResponse {
@@ -41,7 +41,10 @@ class FakeResponse {
 
 function addProduct(body: any): FakeResponse {
   const res = new FakeResponse();
-  new AddProductController(new AddProductUseCase()).handle({body} as unknown as Request, res as unknown as Response)
+  const controller = new AddProductController(
+    new AddProductUseCase(new ProductCatalogInMemory())
+  )
+  controller.handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }
 
