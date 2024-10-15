@@ -1,22 +1,22 @@
 import { Order } from "../domain/Order";
 
-export class OrderRepository {
+export class OrderRepositoryInMemory {
     private static orders: Map<number, Order> = new Map();
     
     clear(): void {
-        OrderRepository.orders = new Map();
+        OrderRepositoryInMemory.orders = new Map();
     }
 
     save(order: Order): void {
-        OrderRepository.orders.set(order.data.id, order);
+        OrderRepositoryInMemory.orders.set(order.data.id, order);
     }
 
     getById(id: number): Order | undefined {
-        return OrderRepository.orders.get(id);
+        return OrderRepositoryInMemory.orders.get(id);
     }
 
     maxId(): number {
-        const orders = OrderRepository.orders;
+        const orders = OrderRepositoryInMemory.orders;
         return orders.size === 0 ? 0 : Math.max(...orders.keys());
     }
 

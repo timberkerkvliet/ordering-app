@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { ProductCatalog } from '../repository/ProductCatalog';
+import { ProductCatalogInMemory } from '../adapters/ProductCatalogInMemory';
 import bigDecimal from 'js-big-decimal';
 
 class AddProductUseCase {
-    private productCatalog: ProductCatalog;
+    private productCatalog: ProductCatalogInMemory;
 
     constructor() {
-      this.productCatalog = new ProductCatalog();
+      this.productCatalog = new ProductCatalogInMemory();
     }
 
     handle(name: string, taxPercentage: number, price: number) {

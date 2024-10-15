@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
-import { ProductCatalog } from '../repository/ProductCatalog';
+import { ProductCatalogInMemory } from '../adapters/ProductCatalogInMemory';
 import bigDecimal from 'js-big-decimal';
-import { OrderRepository } from '../repository/OrderRepository';
+import { OrderRepositoryInMemory } from '../adapters/OrderRepositoryInMemory';
 import { OrderStatus } from "../domain/OrderStatus";
 import { createInvoice } from '../domain/Invoice';
 
 class InvoiceController {
-    private repository: OrderRepository;
+    private repository: OrderRepositoryInMemory;
 
     constructor() {
-      this.repository = new OrderRepository();
+      this.repository = new OrderRepositoryInMemory();
     }
 
     handle(req: Request, res: Response) {

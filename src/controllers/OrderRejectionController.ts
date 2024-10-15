@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { OrderRepository } from '../repository/OrderRepository';
+import { OrderRepositoryInMemory } from '../adapters/OrderRepositoryInMemory';
 import { OrderStatus } from '../domain/OrderStatus';
 
 class OrderRejectionController {
-    private repository: OrderRepository;
+    private repository: OrderRepositoryInMemory;
 
     constructor() {
-      this.repository = new OrderRepository();
+      this.repository = new OrderRepositoryInMemory();
     }
 
     handle(req: Request, res: Response) {

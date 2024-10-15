@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
-import { OrderRepository } from '../repository/OrderRepository';
+import { OrderRepositoryInMemory } from '../adapters/OrderRepositoryInMemory';
 import { Order } from '../domain/Order';
-import { ProductCatalog } from '../repository/ProductCatalog';
+import { ProductCatalogInMemory } from '../adapters/ProductCatalogInMemory';
 
 class OrderPlacementController {
-  private readonly repository: OrderRepository
-  private readonly productCatalog: ProductCatalog
+  private readonly repository: OrderRepositoryInMemory
+  private readonly productCatalog: ProductCatalogInMemory
 
     constructor() {
-      this.repository = new OrderRepository();
-      this.productCatalog = new ProductCatalog();
+      this.repository = new OrderRepositoryInMemory();
+      this.productCatalog = new ProductCatalogInMemory();
     }
 
     handle(req: Request, res: Response) {
@@ -26,7 +26,7 @@ class OrderPlacementController {
             if (product === undefined) {
               return res.status(404).json({ message: 'Product not found' });
             }
-            
+
             order = order.addProduct(product, itemRequest.quantity);
         }
         this.repository.save(order);

@@ -5,8 +5,8 @@ import { OrderRejectionController } from "./controllers/OrderRejectionController
 import { OrderShipmentController } from "./controllers/OrderShipmentController";
 
 import { Request, Response} from "express";
-import { OrderRepository } from "./repository/OrderRepository";
-import { ProductCatalog } from "./repository/ProductCatalog";
+import { OrderRepositoryInMemory } from "./adapters/OrderRepositoryInMemory";
+import { ProductCatalogInMemory } from "./adapters/ProductCatalogInMemory";
 import { InvoiceController } from "./controllers/InvoiceController";
 import { AddProductUseCase } from "./interaction/AddProductUseCase";
 
@@ -77,8 +77,8 @@ function getInvoice(body: any): FakeResponse {
 
 describe('Tests', () => {
   beforeEach(() => {
-    new OrderRepository().clear();
-    new ProductCatalog().clear();
+    new OrderRepositoryInMemory().clear();
+    new ProductCatalogInMemory().clear();
   });
   test('non placing non existing product', () => {
     expect(placeOrder({items: [{name: "Does not exist", quantity: 1}]}).getStatus()).toBe(404);

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ProductCatalog } from '../repository/ProductCatalog';
+import { ProductCatalogInMemory } from '../adapters/ProductCatalogInMemory';
 import bigDecimal from 'js-big-decimal';
 import { AddProductUseCase } from '../interaction/AddProductUseCase';
 
