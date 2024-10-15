@@ -23,12 +23,11 @@ class OrderPlacementController {
 
         for (let itemRequest of items) {
             let product = this.productCatalog.getByName(itemRequest.productName);
-
             if (product === undefined) {
               return res.status(404).json({ message: 'Product not found' });
-            } else {
-              order = order.addProduct(product, itemRequest.quantity);
             }
+            
+            order = order.addProduct(product, itemRequest.quantity);
         }
         this.repository.save(order);
         return res.status(200).json({orderId: order.data.id});

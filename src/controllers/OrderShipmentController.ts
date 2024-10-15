@@ -12,21 +12,16 @@ class OrderShipmentController {
     handle(req: Request, res: Response) {
         const { orderId } = req.body;
     
-        const order = this.repository.getById(orderId);
+        let order = this.repository.getById(orderId);
 
         if (!order) {
           return res.status(404).json({ message: 'Order not found' });
         }
-
-        if (order.data.status === OrderStatus.CREATED || order.data.status === OrderStatus.REJECTED) {
-          return res.status(400).json({ message: 'Order cannot be shipped' });
-        }
-
-        if (order.data.status == OrderStatus.SHIPPED) {
-          return res.status(400).json({ message: 'Order cannot be shipped twice' });
-        }
-
-        order.data.status = OrderStatus.SHIPPED;
+        try {
+        order = order.ship();
+      } catch (error) {
+        return res.status(400).json({message: (error as Error).message})
+      }
         this.repository.save(order);
 
         return res.status(200).json({message: 'Order shipped'});

@@ -12,22 +12,17 @@ class OrderApprovalController {
     handle(req: Request, res: Response) {
         const { orderId } = req.body;
 
-        const order = this.repository.getById(orderId);
+        let order = this.repository.getById(orderId);
     
         if (!order) {
           return res.status(404).json({ message: 'Order not found' });
         }
-    
-        if (order.data.status === OrderStatus.SHIPPED) {
-          return res.status(400).json({ message: 'shipped orders cannot be changed' });
+        
+        try {
+          order = order.approve();
+        } catch (error) {
+          return res.status(400).json({message: (error as Error).message})
         }
-    
-        if (order.data.status === OrderStatus.REJECTED) {
-          return res.status(400).json({ message: 'rejected orders cannot be approved' });
-        }
-
-        order.data.status = OrderStatus.APPROVED;
-    
         this.repository.save(order);
     
         return res.status(200).json({message: 'Order status updated successfully'});
