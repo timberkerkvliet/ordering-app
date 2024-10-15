@@ -9,6 +9,7 @@ import { OrderRepositoryInMemory } from "./adapters/OrderRepositoryInMemory";
 import { ProductCatalogInMemory } from "./adapters/ProductCatalogInMemory";
 import { InvoiceController } from "./outer/InvoiceController";
 import { AddProductUseCase } from "./interaction/AddProductUseCase";
+import { InvoiceUseCase } from "./interaction/InvoiceUseCase";
 
 class FakeResponse {
   private statusCode: number | undefined;
@@ -74,7 +75,8 @@ function shipOrder(body: any): FakeResponse {
 
 function getInvoice(body: any): FakeResponse {
   const res = new FakeResponse();
-  new InvoiceController().handle({body} as unknown as Request, res as unknown as Response)
+  const contoller = new InvoiceController(new InvoiceUseCase(new OrderRepositoryInMemory()));
+  contoller.handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }
 

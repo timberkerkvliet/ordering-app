@@ -1,6 +1,4 @@
 import { Request, Response } from 'express';
-import { ProductCatalogInMemory } from '../adapters/ProductCatalogInMemory';
-import bigDecimal from 'js-big-decimal';
 import { AddProductUseCase } from '../interaction/AddProductUseCase';
 
 class AddProductController {
