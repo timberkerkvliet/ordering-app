@@ -1,30 +1,11 @@
 import { OrderStatus } from "./OrderStatus";
-import { createOrderItemFromProduct, OrderItem } from "./OrderItem";
+import { createOrderItemFromProduct } from "./OrderItem";
 import bigDecimal from "js-big-decimal";
 import { Product } from "./Product";
 import { Money } from "./Money";
 import { ProductQuantity } from "./ProductQuantity";
-
-class OrderId {
-    constructor(public readonly value: number) {
-        const isPositiveInteger = Number.isInteger(value) && value >= 0;
-        if (!isPositiveInteger) {
-            throw new Error('Not an order id');
-        }
-    }
-
-    public next() {
-        return new OrderId(this.value + 1);
-    }
-}
-
-type OrderData = {
-    total: Money;
-    items: OrderItem[];
-    tax: Money;
-    status: OrderStatus;
-    id: OrderId;
-}
+import { OrderId } from "./OrderId";
+import { OrderData } from "./OrderData";
 
 class Order {
     constructor(public readonly data: OrderData) {}
@@ -55,7 +36,6 @@ class Order {
         if (this.data.status === OrderStatus.SHIPPED) {
             throw new Error('shipped orders cannot be changed');
           }
-      
           if (this.data.status === OrderStatus.REJECTED) {
             throw new Error('rejected orders cannot be approved');
           }
@@ -64,28 +44,25 @@ class Order {
     }
 
     public reject(): Order {
-          
         if (this.data.status === OrderStatus.SHIPPED) {
             throw new Error('shipped orders cannot be changed');
-          }
-  
-          if (this.data.status === OrderStatus.APPROVED) {
+        }
+        if (this.data.status === OrderStatus.APPROVED) {
             throw new Error('approved orders cannot be rejected');
-          }
+        }
 
-          return new Order({...this.data, status: OrderStatus.REJECTED });
+        return new Order({...this.data, status: OrderStatus.REJECTED });
     }
 
     public ship(): Order {
         if (this.data.status === OrderStatus.CREATED || this.data.status === OrderStatus.REJECTED) {
             throw new Error('Order cannot be shipped');
-          }
-  
-          if (this.data.status == OrderStatus.SHIPPED) {
-              throw new Error('Order cannot be shipped twice');
-          }
-  
-          return new Order({...this.data, status: OrderStatus.SHIPPED });
+        }
+        if (this.data.status == OrderStatus.SHIPPED) {
+            throw new Error('Order cannot be shipped twice');
+        }
+
+        return new Order({...this.data, status: OrderStatus.SHIPPED });
     }
 
 }

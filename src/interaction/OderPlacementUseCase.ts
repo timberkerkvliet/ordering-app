@@ -1,6 +1,5 @@
 import { Order, OrderId } from '../domain/Order';
 import { ProductQuantity } from '../domain/ProductQuantity';
-import { Quantity } from '../domain/Quantity';
 import { OrderRepository } from '../interaction/OrderRepository';
 import { ProductCatalog } from '../interaction/ProductCatalog';
 import { NotFoundError } from './NotFoundError';
