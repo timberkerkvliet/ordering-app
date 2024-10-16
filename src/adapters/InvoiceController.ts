@@ -1,6 +1,7 @@
 import { InvoiceUseCase } from '../interaction/InvoiceUseCase';
 import { NotFoundError } from '../interaction/NotFoundError';
 import { HttpController, HttpRequest, HttpResponse } from './HttpController';
+import { OrderId } from '../domain/Order';
 
 class InvoiceController implements HttpController {
     constructor(private readonly useCase: InvoiceUseCase) {}
@@ -9,7 +10,7 @@ class InvoiceController implements HttpController {
       const { orderId } = request.body;
 
       try {
-        const invoice = this.useCase.handle(orderId);
+        const invoice = this.useCase.handle(new OrderId(orderId));
         const serializedInvoice = {
           products: invoice.products.map((item) => { return {name: item.productName, quantity: item.quantity.value}}),
           total: invoice.total.value.getValue() + " " + invoice.total.currency,

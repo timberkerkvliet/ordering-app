@@ -1,4 +1,4 @@
-import { Order } from '../domain/Order';
+import { Order, OrderId } from '../domain/Order';
 import { OrderRepository } from '../interaction/OrderRepository';
 import { ProductCatalog } from '../interaction/ProductCatalog';
 import { NotFoundError } from './NotFoundError';
@@ -9,12 +9,12 @@ class OrderPlacementUseCase {
         private readonly productCatalog: ProductCatalog
     ) {}
 
-    handle(items: any): number {
+    handle(items: any): OrderId {
         if (items.length === 0) {
             throw new Error('Order must contain products');
         }
 
-        let order = Order.emptyOrder(this.repository.maxId() + 1);
+        let order = Order.emptyOrder(this.repository.maxId().next());
 
         for (let itemRequest of items) {
             let product = this.productCatalog.getByName(itemRequest.productName);

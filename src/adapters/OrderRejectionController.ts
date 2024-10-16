@@ -1,6 +1,7 @@
 import { OrderStatusUseCase } from '../interaction/OrderStatusUseCase';
 import { NotFoundError } from '../interaction/NotFoundError';
 import { HttpController, HttpRequest, HttpResponse } from './HttpController';
+import { OrderId } from '../domain/Order'
 
 class OrderRejectionController implements HttpController {
     constructor(private readonly useCase: OrderStatusUseCase) {}
@@ -9,7 +10,7 @@ class OrderRejectionController implements HttpController {
         const { orderId } = request.body;
 
         try {
-          this.useCase.reject(orderId);
+          this.useCase.reject(new OrderId(orderId));
         } catch (error) {
           if (error instanceof NotFoundError) {
             return new HttpResponse().status(404).json({ message: 'Order not found' });

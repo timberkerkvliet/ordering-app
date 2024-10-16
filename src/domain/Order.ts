@@ -5,20 +5,33 @@ import { Product } from "./Product";
 import { Quantity } from "./Quantity";
 import { Money } from "./Money";
 
+class OrderId {
+    constructor(public readonly value: number) {
+        const isPositiveInteger = Number.isInteger(value) && value >= 0;
+        if (!isPositiveInteger) {
+            throw new Error('Not an order id');
+        }
+    }
+
+    public next() {
+        return new OrderId(this.value + 1);
+    }
+}
+
 type OrderData = {
     total: Money;
     items: OrderItem[];
     tax: Money;
     status: OrderStatus;
-    id: number;
+    id: OrderId;
 }
 
 class Order {
     constructor(public readonly data: OrderData) {}
 
-    public static emptyOrder(orderId: number): Order {
+    public static emptyOrder(orderId: OrderId): Order {
         return new Order({
-            id: orderId,
+            id: orderId.next(),
             status: OrderStatus.CREATED,
             items: [],
             total: new Money(new bigDecimal("0.00"), "EUR"),
@@ -77,4 +90,4 @@ class Order {
 
 }
 
-export { Order, OrderData}
+export { Order, OrderData, OrderId}

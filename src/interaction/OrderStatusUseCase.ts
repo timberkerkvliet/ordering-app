@@ -1,12 +1,12 @@
 import { OrderRepository } from './OrderRepository';
-import { Order } from '../domain/Order';
+import { Order, OrderId } from '../domain/Order';
 import { NotFoundError } from './NotFoundError';
 
 class OrderStatusUseCase {
 
     constructor(private readonly repository: OrderRepository) {}
 
-    private handleMethod(orderId: number, method: (value: Order) => Order) {
+    private handleMethod(orderId: OrderId, method: (value: Order) => Order) {
         let order = this.repository.getById(orderId);
     
         if (!order) {
@@ -18,15 +18,15 @@ class OrderStatusUseCase {
         this.repository.save(order);  
       };
     
-    public approve(orderId: number) {
+    public approve(orderId: OrderId) {
         this.handleMethod(orderId, (order: Order) => order.approve())
     }
 
-    public reject(orderId: number) {
+    public reject(orderId: OrderId) {
         this.handleMethod(orderId, (order: Order) => order.reject())
     }
 
-    public ship(orderId: number) {
+    public ship(orderId: OrderId) {
         this.handleMethod(orderId, (order: Order) => order.ship())
     }
 }
