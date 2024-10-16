@@ -13,6 +13,7 @@ import { InvoiceUseCase } from "./interaction/InvoiceUseCase";
 import { OrderStatusUseCase } from "./interaction/OrderStatusUseCase";
 import { ExpressController } from "./outer/ExpressController";
 import { OrderPlacementUseCase } from "./interaction/OderPlacementUseCase";
+import { orderPlacementController, addProductController, orderApprovalController, orderRejectionController, orderShipmentController, invoiceController } from "./outer/CompositionRoot";
 
 class FakeResponse {
   private statusCode: number | undefined;
@@ -45,56 +46,37 @@ class FakeResponse {
 
 function addProduct(body: any): FakeResponse {
   const res = new FakeResponse();
-  const controller = new ExpressController(
-    new AddProductController(
-    new AddProductUseCase(new ProductCatalogInMemory())
-    )
-  )
-  controller.handle({body} as unknown as Request, res as unknown as Response)
+  addProductController().handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }
 
 function placeOrder(body: any): FakeResponse {
   const res = new FakeResponse();
-  const controller = new ExpressController(
-    new OrderPlacementController(
-      new OrderPlacementUseCase(
-        new OrderRepositoryInMemory(),
-        new ProductCatalogInMemory()
-        )
-      )
-    );
-  controller.handle({body} as unknown as Request, res as unknown as Response)
+  orderPlacementController().handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }
 
 function approveOrder(body: any): FakeResponse {
   const res = new FakeResponse();
-  const contoller = new ExpressController(new OrderApprovalController(
-    new OrderStatusUseCase(new OrderRepositoryInMemory()))
-  )
-  contoller.handle({body} as unknown as Request, res as unknown as Response)
+  orderApprovalController().handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }
 
 function rejectOrder(body: any): FakeResponse {
   const res = new FakeResponse();
-  const controller = new ExpressController(new OrderRejectionController(new OrderStatusUseCase(new OrderRepositoryInMemory())));
-  controller.handle({body} as unknown as Request, res as unknown as Response)
+  orderRejectionController().handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }
 
 function shipOrder(body: any): FakeResponse {
   const res = new FakeResponse();
-  const controller = new ExpressController(new OrderShipmentController(new OrderStatusUseCase(new OrderRepositoryInMemory())));
-  controller.handle({body} as unknown as Request, res as unknown as Response)
+  orderShipmentController().handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }
 
 function getInvoice(body: any): FakeResponse {
   const res = new FakeResponse();
-  const contoller = new ExpressController(new InvoiceController(new InvoiceUseCase(new OrderRepositoryInMemory())));
-  contoller.handle({body} as unknown as Request, res as unknown as Response)
+  invoiceController().handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }
 

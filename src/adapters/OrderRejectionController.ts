@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 import { OrderStatusUseCase } from '../interaction/OrderStatusUseCase';
 import { NotFoundError } from '../interaction/NotFoundError';
 import { HttpController, HttpRequest, HttpResponse } from './HttpController';
