@@ -13,8 +13,8 @@ function createInvoice(order: OrderData): Invoice {
       }
     return {
         products: order.items.map((item) => { return {name: item.productQuantity.productName, quantity: item.productQuantity.quantity.value}}),
-        total: order.total.getValue() + " " + order.currency,
-        totalTax: order.tax.getValue() + " " + order.currency
+        total: order.total.value.getValue() + " " + order.total.currency,
+        totalTax: order.tax.value.getValue() + " " + order.tax.currency
       }
 }
 

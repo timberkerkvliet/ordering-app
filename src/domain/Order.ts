@@ -3,12 +3,12 @@ import { createOrderItemFromProduct, OrderItem } from "./OrderItem";
 import bigDecimal from "js-big-decimal";
 import { Product } from "./Product";
 import { Quantity } from "./Quantity";
+import { Money } from "./Money";
 
 type OrderData = {
-    total: bigDecimal;
-    currency: string;
+    total: Money;
     items: OrderItem[];
-    tax: bigDecimal;
+    tax: Money;
     status: OrderStatus;
     id: number;
 }
@@ -21,9 +21,8 @@ class Order {
             id: orderId,
             status: OrderStatus.CREATED,
             items: [],
-            currency: "EUR",
-            total: new bigDecimal("0.00"),
-            tax: new bigDecimal("0.00")
+            total: new Money(new bigDecimal("0.00"), "EUR"),
+            tax: new Money(new bigDecimal("0.00"), "EUR")
           })
     }
     
