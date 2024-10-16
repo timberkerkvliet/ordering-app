@@ -12,6 +12,7 @@ import { AddProductUseCase } from "./interaction/AddProductUseCase";
 import { InvoiceUseCase } from "./interaction/InvoiceUseCase";
 import { OrderStatusUseCase } from "./interaction/OrderStatusUseCase";
 import { ExpressController } from "./outer/ExpressController";
+import { OrderPlacementUseCase } from "./interaction/OderPlacementUseCase";
 
 class FakeResponse {
   private statusCode: number | undefined;
@@ -55,7 +56,14 @@ function addProduct(body: any): FakeResponse {
 
 function placeOrder(body: any): FakeResponse {
   const res = new FakeResponse();
-  const controller = new ExpressController(new OrderPlacementController());
+  const controller = new ExpressController(
+    new OrderPlacementController(
+      new OrderPlacementUseCase(
+        new OrderRepositoryInMemory(),
+        new ProductCatalogInMemory()
+        )
+      )
+    );
   controller.handle({body} as unknown as Request, res as unknown as Response)
   return res;
 }

@@ -1,6 +1,7 @@
 import { Order } from "../domain/Order";
+import { OrderRepository } from "../interaction/OrderRepository";
 
-export class OrderRepositoryInMemory {
+export class OrderRepositoryInMemory implements OrderRepository {
     private static orders: Map<number, Order> = new Map();
     
     clear(): void {

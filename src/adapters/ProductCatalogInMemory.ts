@@ -1,6 +1,7 @@
 import { Product } from "../domain/Product";
+import { ProductCatalog } from "../interaction/ProductCatalog";
 
-export class ProductCatalogInMemory {
+export class ProductCatalogInMemory implements ProductCatalog {
     private static products: Map<string, Product> = new Map();
 
     clear(): void {
