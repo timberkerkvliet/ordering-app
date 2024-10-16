@@ -9,17 +9,8 @@ class OrderPlacementController implements HttpController {
 
     handle(request: HttpRequest): HttpResponse {
         const items = request.body.items;
-
-        try {
-          const orderId = this.useCase.handle(items);
-          return new HttpResponse().status(200).json({orderId: orderId.value});
-        } catch (error) {
-          if (error instanceof NotFoundError) {
-            return new HttpResponse().status(404).json({ message: 'Order not found' });
-          }
-          return new HttpResponse().status(400).json({message: (error as Error).message})
-        }
-        
+        const orderId = this.useCase.handle(items);
+        return new HttpResponse().status(200).json({orderId: orderId.value});
       };
 }
 
