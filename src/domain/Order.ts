@@ -4,6 +4,7 @@ import bigDecimal from "js-big-decimal";
 import { Product } from "./Product";
 import { Quantity } from "./Quantity";
 import { Money } from "./Money";
+import { ProductQuantity } from "./ProductQuantity";
 
 class OrderId {
     constructor(public readonly value: number) {
@@ -29,18 +30,18 @@ type OrderData = {
 class Order {
     constructor(public readonly data: OrderData) {}
 
-    public static emptyOrder(orderId: OrderId): Order {
+    public static createOrder(orderId: OrderId, productQuantity: ProductQuantity, product: Product): Order {
         return new Order({
             id: orderId.next(),
             status: OrderStatus.CREATED,
             items: [],
             total: new Money(new bigDecimal("0.00"), "EUR"),
             tax: new Money(new bigDecimal("0.00"), "EUR")
-          })
+          }).addProduct(productQuantity, product);
     }
     
-    public addProduct(product: Product, quantity: number): Order {
-        const orderItem = createOrderItemFromProduct({productName: product.name, quantity: new Quantity(quantity)}, product);
+    public addProduct(productQuantity: ProductQuantity, product: Product): Order {
+        const orderItem = createOrderItemFromProduct(productQuantity, product);
         return new Order(
             {
                 ...this.data,

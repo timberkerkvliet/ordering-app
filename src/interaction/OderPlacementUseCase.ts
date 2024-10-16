@@ -1,4 +1,6 @@
 import { Order, OrderId } from '../domain/Order';
+import { ProductQuantity } from '../domain/ProductQuantity';
+import { Quantity } from '../domain/Quantity';
 import { OrderRepository } from '../interaction/OrderRepository';
 import { ProductCatalog } from '../interaction/ProductCatalog';
 import { NotFoundError } from './NotFoundError';
@@ -9,21 +11,24 @@ class OrderPlacementUseCase {
         private readonly productCatalog: ProductCatalog
     ) {}
 
-    handle(items: any): OrderId {
-        if (items.length === 0) {
-            throw new Error('Order must contain products');
-        }
-
-        let order = Order.emptyOrder(this.repository.maxId().next());
-
-        for (let itemRequest of items) {
-            let product = this.productCatalog.getByName(itemRequest.productName);
+    handle(items: ProductQuantity[]): OrderId {
+        let order;
+        for (let productQuantity of items) {
+            let product = this.productCatalog.getByName(productQuantity.productName);
             if (product === undefined) {
                 throw new NotFoundError('Product not found');
             }
-
-            order = order.addProduct(product, itemRequest.quantity);
+            if (order === undefined) {
+                order = Order.createOrder(this.repository.maxId(), productQuantity , product)
+            } else {
+                order = order.addProduct(productQuantity, product);
+            }            
         }
+
+        if (order === undefined) {
+            throw new Error('Order must contain products');
+        }
+
         this.repository.save(order);
         return order.data.id;
       };

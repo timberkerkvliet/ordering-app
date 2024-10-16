@@ -17,11 +17,9 @@ class InvoiceController implements HttpController {
 
     handle(request: HttpRequest): HttpResponse {
       const { orderId } = request.body;
-
       const invoice = this.useCase.handle(new OrderId(orderId));
       return new HttpResponse().status(200).json(this.serialize(invoice));
-
-      };
+    };
 }
 
 export { InvoiceController }
