@@ -1,21 +1,24 @@
-import { Product } from "./Product";
+import { ProductQuantity } from "./ProductQuantity";
+
 import bigDecimal from "js-big-decimal";
+import { Product } from "./Product";
 
 type OrderItem = {
-    product: Product;
-    quantity: number;
+    productQuantity: ProductQuantity;
     taxedAmount: bigDecimal;
     tax: bigDecimal;
 }
 
-function createOrderItemFromProduct(product: Product, quantity: number): OrderItem {
+function createOrderItemFromProduct(
+    productQuantity: ProductQuantity,
+    product: Product
+): OrderItem {
     const unitaryTax = product.price.divide(new bigDecimal(100)).multiply(product.taxPercentage).round(2);
         const unitaryTaxedAmount = product.price.add(unitaryTax).round(2);
-        const taxedAmount = unitaryTaxedAmount.multiply(new bigDecimal(quantity)).round(2);
-        const taxAmount = unitaryTax.multiply(new bigDecimal(quantity));
+        const taxedAmount = unitaryTaxedAmount.multiply(new bigDecimal(productQuantity.quantity.value)).round(2);
+        const taxAmount = unitaryTax.multiply(new bigDecimal(productQuantity.quantity.value));
         return {
-            product: product,
-            quantity: quantity,
+            productQuantity: productQuantity,
             tax: taxAmount,
             taxedAmount: taxedAmount
         }

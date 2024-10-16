@@ -12,7 +12,7 @@ function createInvoice(order: OrderData): Invoice {
         throw new Error('Order is not shipped');
       }
     return {
-        products: order.items.map((item) => { return {name: item.product.name, quantity: item.quantity}}),
+        products: order.items.map((item) => { return {name: item.productQuantity.productName, quantity: item.productQuantity.quantity.value}}),
         total: order.total.getValue() + " " + order.currency,
         totalTax: order.tax.getValue() + " " + order.currency
       }

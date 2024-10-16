@@ -2,6 +2,7 @@ import { OrderStatus } from "./OrderStatus";
 import { createOrderItemFromProduct, OrderItem } from "./OrderItem";
 import bigDecimal from "js-big-decimal";
 import { Product } from "./Product";
+import { Quantity } from "./Quantity";
 
 type OrderData = {
     total: bigDecimal;
@@ -27,7 +28,7 @@ class Order {
     }
     
     public addProduct(product: Product, quantity: number): Order {
-        const orderItem = createOrderItemFromProduct(product, quantity);
+        const orderItem = createOrderItemFromProduct({productName: product.name, quantity: new Quantity(quantity)}, product);
         return new Order(
             {
                 ...this.data,

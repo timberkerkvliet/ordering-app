@@ -4,7 +4,6 @@ import { OrderApprovalController } from "../adapters/OrderApprovalController";
 import { OrderRejectionController } from "../adapters/OrderRejectionController";
 import { OrderShipmentController } from "../adapters/OrderShipmentController";
 
-import { Request, Response} from "express";
 import { OrderRepositoryInMemory } from "../adapters/OrderRepositoryInMemory";
 import { ProductCatalogInMemory } from "../adapters/ProductCatalogInMemory";
 import { InvoiceController } from "../adapters/InvoiceController";
