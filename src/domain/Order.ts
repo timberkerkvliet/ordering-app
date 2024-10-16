@@ -2,7 +2,6 @@ import { OrderStatus } from "./OrderStatus";
 import { createOrderItemFromProduct, OrderItem } from "./OrderItem";
 import bigDecimal from "js-big-decimal";
 import { Product } from "./Product";
-import { Quantity } from "./Quantity";
 import { Money } from "./Money";
 import { ProductQuantity } from "./ProductQuantity";
 

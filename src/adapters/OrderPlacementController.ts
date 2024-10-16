@@ -1,6 +1,5 @@
 import { OrderPlacementUseCase } from '../interaction/OderPlacementUseCase';
 import { HttpController, HttpRequest, HttpResponse } from './HttpController';
-import { NotFoundError } from '../interaction/NotFoundError';
 import { Quantity } from '../domain/Quantity';
 
 class OrderPlacementController implements HttpController {
