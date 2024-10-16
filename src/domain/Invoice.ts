@@ -1,10 +1,12 @@
 import { OrderData } from "./Order";
 import { OrderStatus } from "./OrderStatus";
+import { ProductQuantity } from "./ProductQuantity";
+import { Money } from "./Money";
 
 type Invoice = {
-    products: {name: string, quantity: number}[],
-    total: string,
-    totalTax: string
+    products: ProductQuantity[],
+    total: Money,
+    totalTax: Money
 }
 
 function createInvoice(order: OrderData): Invoice {
@@ -12,9 +14,9 @@ function createInvoice(order: OrderData): Invoice {
         throw new Error('Order is not shipped');
       }
     return {
-        products: order.items.map((item) => { return {name: item.productQuantity.productName, quantity: item.productQuantity.quantity.value}}),
-        total: order.total.value.getValue() + " " + order.total.currency,
-        totalTax: order.tax.value.getValue() + " " + order.tax.currency
+        products: order.items.map((item) => { return item.productQuantity}),
+        total: order.total,
+        totalTax: order.tax
       }
 }
 

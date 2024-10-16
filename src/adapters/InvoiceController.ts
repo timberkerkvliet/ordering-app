@@ -10,7 +10,12 @@ class InvoiceController implements HttpController {
 
       try {
         const invoice = this.useCase.handle(orderId);
-        return new HttpResponse().status(200).json(invoice);
+        const serializedInvoice = {
+          products: invoice.products.map((item) => { return {name: item.productName, quantity: item.quantity.value}}),
+          total: invoice.total.value.getValue() + " " + invoice.total.currency,
+          totalTax: invoice.totalTax.value.getValue() + " " + invoice.totalTax.currency
+        }
+        return new HttpResponse().status(200).json(serializedInvoice);
       } catch (error) {
         if (error instanceof NotFoundError) {
           return new HttpResponse().status(404).json({message: error.message})
